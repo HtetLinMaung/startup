@@ -94,8 +94,13 @@ router.post("/build-image", async (req, res) => {
         await repository.save();
       }
     } else {
-      const repository = new Repository(req.body);
-      await repository.save();
+      const repository = await Repository.findOne({ git: req.body.git });
+      if (repository) {
+        data = repository._doc;
+      } else {
+        const repository = new Repository(req.body);
+        await repository.save();
+      }
     }
     buildImage(data, (err, tag) => {
       if (err) {
