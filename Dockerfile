@@ -1,6 +1,7 @@
 FROM node:lts-alpine3.14
 
-RUN apk add openrc
+RUN apk update
+RUN apk add git
 RUN apk add docker
 
 WORKDIR /app
