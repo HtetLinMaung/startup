@@ -4,7 +4,7 @@ module.exports = {
   login: (userid, password, cb = () => {}) => {
     return new Promise((resolve, reject) => {
       exec(
-        `docker login -u ${userid} --password-stdin ${password}`,
+        `docker login -u ${userid} --password ${password}`,
         (error, stdout, stderr) => {
           const messages = [];
           if (error) {
