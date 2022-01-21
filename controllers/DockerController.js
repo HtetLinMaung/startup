@@ -134,6 +134,72 @@ router.post("/build-image", async (req, res) => {
   }
 });
 
+router.post("run-container", async (req, res) => {
+  try {
+    docker.run(
+      req.body.image,
+      req.body.containername,
+      `-d -p ${req.body.port}`,
+      (err) => {
+        if (err) {
+          return res
+            .status(SERVER_ERROR.code)
+            .json({ ...SERVER_ERROR, message: err.message });
+        }
+        res.json({ ...OK, message: "Container is online" });
+      }
+    );
+  } catch (err) {
+    res.status(SERVER_ERROR.code).json(SERVER_ERROR);
+  }
+});
+
+router.post("deploy-container", async (req, res) => {
+  try {
+    let data = req.body;
+    if (req.query.id) {
+      const repository = await Repository.findById(req.query.id);
+      if (repository) {
+        data = repository._doc;
+      } else {
+        const repository = new Repository(req.body);
+        await repository.save();
+      }
+    } else {
+      const repository = await Repository.findOne({ git: req.body.git });
+      if (repository) {
+        data = repository._doc;
+      } else {
+        const repository = new Repository(req.body);
+        await repository.save();
+      }
+    }
+    buildImage(data, (err, tag) => {
+      if (err) {
+        return res
+          .status(SERVER_ERROR.code)
+          .json({ ...SERVER_ERROR, message: err.message });
+      }
+
+      docker.run(
+        tag,
+        req.body.containername,
+        `-d -p ${req.body.port}`,
+        (err) => {
+          if (err) {
+            return res
+              .status(SERVER_ERROR.code)
+              .json({ ...SERVER_ERROR, message: err.message });
+          }
+          res.json({ ...OK, message: "Container is online" });
+        }
+      );
+    });
+  } catch (err) {
+    res.status(SERVER_ERROR.code).json(SERVER_ERROR);
+  }
+});
+
 // router.post("/push-image", (req, res) => {
 //   docker.login(req.body.userid, req.body.password, (err) => {
 //     if (err) {
