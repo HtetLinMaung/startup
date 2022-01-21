@@ -23,6 +23,8 @@ app.get("/", (req, res) => {
   res.json({ message: "hello world" });
 });
 
-app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
+app.listen(PORT, "150.95.82.125", () =>
+  console.log(`Server listening on port ${PORT}`)
+);
 
 module.exports = app;
