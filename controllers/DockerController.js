@@ -105,7 +105,7 @@ router.post("/build-image", async (req, res) => {
       }
 
       docker.login(
-        process.env.c,
+        process.env.DOCKER_USERID,
         process.env.DOCKER_PASSWORD,
         (err) => {
           if (err) {
