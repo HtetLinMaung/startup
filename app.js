@@ -23,7 +23,7 @@ app.get("/", (req, res) => {
   res.json({ message: "hello world" });
 });
 
-app.listen(PORT, "150.95.82.125", () =>
+app.listen(PORT, "0.0.0.0", () =>
   console.log(`Server listening on port ${PORT}`)
 );
 
